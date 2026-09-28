@@ -10,10 +10,17 @@ import PrevisibilidadeTab from '../Components/tabs/PrevisibilidadeTab';
 import DesempenhoTab from '../Components/tabs/DesempenhoTab';
 import PrecificacaoTab from '../Components/tabs/PrecificacaoTab';
 import CestaComprasTab from '../Components/tabs/CestaComprasTab';
+import MarketingTab from '../Components/tabs/MarketingTab';
+import SazonalidadeTab from '../Components/tabs/SazonalidadeTab';
+import MarketingRFMTab from '../Components/tabs/MarketingRFMTab';
 import './Dashboard.css';
+
 
 // ÍCONES SVG DA APLICAÇÃO
 const Icons = {
+  Users: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>,
+  Calendar: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>,
+  Megaphone: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>,
   Home: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>,
   Box: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>,
   Map: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>,
@@ -50,9 +57,13 @@ export default function Dashboard() {
     { id: 'precificacao', label: 'Precificação & Descontos', icon: <Icons.Tag /> },
     { id: 'cesta', label: 'Cesta de Compras', icon: <Icons.Cart /> },
     { id: 'estoque', label: 'Estoque / Inventário', icon: <Icons.Layers /> },
+    { id: 'sazonalidade', label: 'Sazonalidade Diária', icon: <Icons.Calendar /> },
     { id: 'previsibilidade', label: 'Previsibilidade ABC', icon: <Icons.Trending /> },
     { id: 'desempenho', label: 'Gestão & Desempenho', icon: <Icons.Target /> },
+    { id: 'marketing', label: 'Campanhas & Regiões', icon: <Icons.Megaphone /> },
+    { id: 'rfm', label: 'Perfil de Pedidos (RFM)', icon: <Icons.Users /> },
     { id: 'servicos', label: 'Serviços Financeiros', icon: <Icons.Credit /> }
+    
   ];
 
   return (
@@ -94,10 +105,13 @@ export default function Dashboard() {
               {activeTab === 'lojas' && salesData.data.length > 0 && <LojasTab salesData={salesData} printProps={printProps} />}
               {activeTab === 'precificacao' && <PrecificacaoTab salesData={salesData} printProps={printProps} />}
               {activeTab === 'cesta' && <CestaComprasTab salesData={salesData} printProps={printProps} />}
+              {activeTab === 'rfm' && salesData.data.length > 0 && <MarketingRFMTab salesData={salesData} printProps={printProps} />}
               {activeTab === 'estoque' && <EstoqueTab salesData={salesData} printProps={printProps} />}
               {activeTab === 'previsibilidade' && <PrevisibilidadeTab salesData={salesData} printProps={printProps} />}
               {activeTab === 'desempenho' && <DesempenhoTab salesData={salesData} printProps={printProps} />}
               {activeTab === 'servicos' && salesData.data.length > 0 && <ServicosTab salesData={salesData} printProps={printProps} />}
+              {activeTab === 'marketing' && salesData.data.length > 0 && <MarketingTab salesData={salesData} printProps={printProps} />}
+              {activeTab === 'sazonalidade' && salesData.data.length > 0 && <SazonalidadeTab salesData={salesData} printProps={printProps} />}
             </>
           )}
         </main>

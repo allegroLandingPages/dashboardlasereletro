@@ -156,6 +156,7 @@ export default function ProdutosTab({ salesData, printProps }) {
                     <span className="kpi-subtext" style={{ fontWeight: 'bold', display: 'block', color: '#111827', marginTop: '0.25rem' }}>{prodData.name}</span>
                   </div>
                   <div style={{ textAlign: 'right' }}>
+                    <span className="kpi-label" style={{ color: '#6b7280', fontSize: '0.75rem' }}>Total Vendido </span>
                     <span className="kpi-value" style={{ fontSize: '2rem', color: '#111827' }}>{prodData.total}</span>
                   </div>
                 </div>

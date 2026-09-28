@@ -5,6 +5,9 @@ import { usePredictiveAnalysis } from './usePredictiveAnalysis';
 import { usePerformanceManagement } from './usePerformanceManagement';
 import { usePricingAnalysis } from './usePricingAnalysis';
 import { useBasketAnalysis } from './useBasketAnalysis';
+import { useMarketingAnalysis } from './useMarketingAnalysis';
+import { useSeasonalityAnalysis } from './useSeasonalityAnalysis';
+import { useMarketingRFM } from './useMarketingRFM';
 export function useSalesData() {
   const salesCore = useSalesCore();
   const productAnalysis = useProductAnalysis(salesCore.data, salesCore.dateFilteredData);
@@ -23,6 +26,9 @@ export function useSalesData() {
     salesCore.uniqueProductsData
   );
   const basket = useBasketAnalysis(salesCore.dateFilteredData, salesCore.data, salesCore.uniqueProductsData);
+  const marketing = useMarketingAnalysis(salesCore.dateFilteredData, salesCore.regularData);
+  const seasonality = useSeasonalityAnalysis(salesCore.dateFilteredData);
+  const rfm = useMarketingRFM(salesCore.dateFilteredData);
   return {
     ...salesCore,
     ...productAnalysis,
@@ -30,6 +36,9 @@ export function useSalesData() {
     ...predictive,
     ...performance,
     ...pricing,
-    ...basket
+    ...basket,
+   ...marketing,
+   ...seasonality,
+    ...rfm
   };
 }

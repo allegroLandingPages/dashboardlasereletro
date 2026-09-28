@@ -12,7 +12,7 @@ function App() {
         
           <div>
           <Dashboard />
-          <StockDashboard />
+
           <footer>
           © Laser Eletro – Dashboard geral • Desenvolvedor: Vinicius MKT • Versão: Alpha 1.0.0 • 2026
           </footer>
