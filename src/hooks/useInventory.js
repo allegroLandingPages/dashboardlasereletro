@@ -5,8 +5,14 @@ export function useInventory() {
   const [inventoryData, setInventoryData] = useState([]);
   const [isInventoryLoading, setIsInventoryLoading] = useState(false);
 
+  // Higienizador de moeda para lidar com R$, pontos e espaços
+  const parseCurrency = (value) => {
+    if (!value) return 0;
+    const cleanString = String(value).replace(/[^0-9,-]+/g, '').replace(',', '.');
+    return parseFloat(cleanString) || 0;
+  };
+
   const parseInventoryCSV = (rows) => {
-    // Encontra a linha de cabeçalho baseando-se na coluna 6 (CÓDIGO)
     const headerIndex = rows.findIndex(r => String(r[6] || '').toUpperCase().trim() === 'CÓDIGO');
     const dataRows = headerIndex > -1 ? rows.slice(headerIndex + 1) : rows;
 
@@ -16,21 +22,24 @@ export function useInventory() {
 
       const storeQty = parseInt(row[17]) || 0; // Coluna 17: LOJA
       const cdQty = parseInt(row[18]) || 0;    // Coluna 18: DEPÓSITO
+      const unitValue = parseCurrency(row[19]);// Coluna 19: VALOR
 
       return {
-        filialCode: String(row[0] || '').trim(), // Coluna 0: FILIAL
-        filialName: String(row[2] || '').trim(), // Coluna 2: NOME
-        city: String(row[3] || '').trim(),       // Coluna 3: CIDADE
-        state: String(row[4] || '').trim(),      // Coluna 4: UF
-        code: codeStr,                           // Coluna 6: CÓDIGO
-        name: String(row[7] || '').trim(),       // Coluna 7: DESCRIÇÃO
-        section: String(row[8] || '').trim(),    // Coluna 8: SEÇÃO
-        brand: String(row[9] || '').trim(),      // Coluna 9: MARCA
-        category: String(row[10] || '').trim(),  // Coluna 10: CATEGORIA
+        filialCode: String(row[0] || '').trim(),
+        filialName: String(row[2] || '').trim(),
+        city: String(row[3] || '').trim(),
+        state: String(row[4] || '').trim(),
+        code: codeStr,
+        name: String(row[7] || '').trim(),
+        section: String(row[8] || '').trim(),
+        brand: String(row[9] || '').trim(),
+        category: String(row[10] || '').trim(),
         
-        storeQty: storeQty,                      // Coluna 17: Qtd Loja
-        cdQty: cdQty,                            // Coluna 18: Qtd Depósito
-        networkQty: storeQty + cdQty             // Total físico na linha
+        storeQty: storeQty,
+        cdQty: cdQty,
+        networkQty: storeQty + cdQty,
+        unitValue: unitValue,
+        totalValue: (storeQty + cdQty) * unitValue
       };
     }).filter(item => item !== null);
   };

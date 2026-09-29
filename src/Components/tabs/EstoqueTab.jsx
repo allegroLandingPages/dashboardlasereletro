@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { formatCurrency } from '../../utils/helpers';
 import TableSection from '../TableSection';
 
 export default function EstoqueTab({ salesData, printProps }) {
@@ -12,11 +13,9 @@ export default function EstoqueTab({ salesData, printProps }) {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 100;
 
-  // Extrair opções únicas para os dropdowns
   const uniqueBrands = useMemo(() => Array.from(new Set(inventoryData.map(i => i.brand).filter(Boolean))).sort(), [inventoryData]);
   const uniqueFiliais = useMemo(() => Array.from(new Set(inventoryData.map(i => i.filialName).filter(Boolean))).sort(), [inventoryData]);
 
-  // Filtragem e Ordenação
   const filteredInventory = useMemo(() => {
     return inventoryData
       .filter(item => {
@@ -30,7 +29,6 @@ export default function EstoqueTab({ salesData, printProps }) {
       .sort((a, b) => (b.networkQty || 0) - (a.networkQty || 0));
   }, [inventoryData, filterCode, filterDesc, filterBrand, filterFilial]);
 
-  // Resetar a página ao filtrar
   useEffect(() => {
     setCurrentPage(1);
   }, [filterCode, filterDesc, filterBrand, filterFilial]);
@@ -43,21 +41,21 @@ export default function EstoqueTab({ salesData, printProps }) {
     return <div className="card empty-chart"><p>Importe o ficheiro de Estoque para visualizar a análise de inventário.</p></div>;
   }
 
+  // KPIs
   const totalStore = filteredInventory.reduce((acc, curr) => acc + (curr.storeQty || 0), 0);
   const totalCD = filteredInventory.reduce((acc, curr) => acc + (curr.cdQty || 0), 0);
   const totalItems = totalStore + totalCD;
+  const totalCapital = filteredInventory.reduce((acc, curr) => acc + (curr.totalValue || 0), 0);
 
   const columns = [
     { header: 'Filial', accessor: 'filialName', style: { fontWeight: 'bold' } },
-    { header: 'Cidade/UF', render: (row) => `${row.city} - ${row.state}` },
     { header: 'Código', accessor: 'code', style: { fontWeight: 'bold' } },
     { header: 'Descrição', accessor: 'name' },
-    { header: 'Seção', accessor: 'section' },
     { header: 'Marca', accessor: 'brand' },
-    { header: 'Categoria', accessor: 'category' },
     { header: 'Qtd Loja', accessor: 'storeQty' },
     { header: 'Qtd Depósito', accessor: 'cdQty' },
-    { header: 'Total', accessor: 'networkQty', style: { fontWeight: 'bold', color: '#0369a1' } }
+    { header: 'Qtd Total', accessor: 'networkQty', style: { fontWeight: 'bold', color: '#0369a1' } },
+    { header: 'Valor de Venda', render: (row) => formatCurrency(row.unitValue) }
   ];
 
   const totalPages = Math.ceil(filteredInventory.length / ITEMS_PER_PAGE);
@@ -101,6 +99,7 @@ export default function EstoqueTab({ salesData, printProps }) {
         </div>
       </section>
 
+      
 
       <TableSection 
         id="estoque-tabela"
