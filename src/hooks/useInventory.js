@@ -5,40 +5,32 @@ export function useInventory() {
   const [inventoryData, setInventoryData] = useState([]);
   const [isInventoryLoading, setIsInventoryLoading] = useState(false);
 
-  // Função auxiliar para limpar "R$", espaços e formatar de Pt-BR para Float
-  const parseCurrency = (value) => {
-    if (!value) return 0;
-    // Remove tudo o que não for número, vírgula ou sinal de menos
-    const cleanString = String(value).replace(/[^0-9,-]+/g, '').replace(',', '.');
-    return parseFloat(cleanString) || 0;
-  };
-
   const parseInventoryCSV = (rows) => {
-    const headerIndex = rows.findIndex(r => String(r[1] || '').toUpperCase().trim() === 'CÓDIGO');
+    // Encontra a linha de cabeçalho baseando-se na coluna 6 (CÓDIGO)
+    const headerIndex = rows.findIndex(r => String(r[6] || '').toUpperCase().trim() === 'CÓDIGO');
     const dataRows = headerIndex > -1 ? rows.slice(headerIndex + 1) : rows;
 
     return dataRows.map(row => {
-      const codeStr = String(row[1] || '').trim();
+      const codeStr = String(row[6] || '').trim();
       if (!codeStr) return null;
 
+      const storeQty = parseInt(row[17]) || 0; // Coluna 17: LOJA
+      const cdQty = parseInt(row[18]) || 0;    // Coluna 18: DEPÓSITO
+
       return {
-        section: String(row[0] || '').trim(), 
-        code: codeStr,                        
-        name: String(row[2] || '').trim(),    
-        brand: String(row[3] || '').trim(),   
+        filialCode: String(row[0] || '').trim(), // Coluna 0: FILIAL
+        filialName: String(row[2] || '').trim(), // Coluna 2: NOME
+        city: String(row[3] || '').trim(),       // Coluna 3: CIDADE
+        state: String(row[4] || '').trim(),      // Coluna 4: UF
+        code: codeStr,                           // Coluna 6: CÓDIGO
+        name: String(row[7] || '').trim(),       // Coluna 7: DESCRIÇÃO
+        section: String(row[8] || '').trim(),    // Coluna 8: SEÇÃO
+        brand: String(row[9] || '').trim(),      // Coluna 9: MARCA
+        category: String(row[10] || '').trim(),  // Coluna 10: CATEGORIA
         
-        // Quantidades e Estoque
-        storeQty: parseInt(row[11]) || 0,     
-        cdQty: (parseInt(row[12]) || 0) + (parseInt(row[13]) || 0) + (parseInt(row[14]) || 0), 
-        networkQty: parseInt(row[15]) || 0,   
-        reservedQty: parseInt(row[16]) || 0,  
-        
-        // Custos e Preços convertidos com a função de limpeza (Colunas V=21 e W=22)
-        costPrice: parseCurrency(row[21]),  
-        salePrice: parseCurrency(row[22]),  
-        
-        // Cobertura
-        monthsCoverage: parseFloat(String(row[18] || '0').replace(',', '.')) || 0 
+        storeQty: storeQty,                      // Coluna 17: Qtd Loja
+        cdQty: cdQty,                            // Coluna 18: Qtd Depósito
+        networkQty: storeQty + cdQty             // Total físico na linha
       };
     }).filter(item => item !== null);
   };
